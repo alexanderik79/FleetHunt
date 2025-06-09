@@ -1,98 +1,311 @@
-.container {
-  max-width: 800px;
-  margin: 0 auto;
-  padding: 10px;
-  text-align: center;
+/* Глобальные стили для устранения отступов */
+html, body, #root {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
 }
 
+/* Импортируем Google Fonts */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&family=Roboto+Slab:wght@700&display=swap');
+
+/* Основной контейнер */
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: flex-start;
+  width: 100vw;
+  height: 100vh;
+  max-width: 100vw; /* Ограничиваем ширину */
+  background-image: url('/public/ocean-background.jpg');
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  color: #fff;
+  font-family: 'Poppins', sans-serif;
+  position: relative;
+  overflow: auto;
+  padding: 0.5rem;
+  box-sizing: border-box;
+  z-index: 1;
+}
+
+/* Оверлей */
+.container::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 50, 0.5);
+  z-index: -1;
+}
+
+/* Заголовок */
+h1 {
+  font-family: 'Roboto Slab', serif;
+  font-size: 2.5rem;
+  text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+  margin: 0.5rem 0;
+  color: #ffd700;
+}
+
+/* Игровое поле */
 .game {
   display: flex;
-  gap: 20px;
+  flex-direction: row;
+  gap: 0.5rem; /* Уменьшенный отступ */
   justify-content: center;
+  flex-wrap: wrap;
+  padding: 0.5rem;
+  max-width: 100%; /* Не превышает контейнер */
 }
 
+/* Доска */
 .board {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 0.3rem; /* Уменьшенный padding */
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(5px);
+}
+
+/* Заголовки досок */
+.board h2 {
+  font-family: 'Roboto Slab', serif;
+  font-size: 1.2rem;
+  color: #00b7eb;
   text-align: center;
+  margin-bottom: 0.2rem;
 }
 
+/* Сетка */
 .grid {
-  display: inline-grid;
+  display: flex;
+  flex-direction: column;
 }
 
-.grid-row {
+.grid-labels, .grid-row {
   display: flex;
 }
 
+/* Клетки */
 .cell {
   width: 30px;
   height: 30px;
-  border: 1px solid #000;
-  cursor: pointer;
+  border: 1px solid #ffffff33;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 16px;
+  font-size: 0.9rem;
+  position: relative;
+  overflow: hidden;
 }
 
 .cell.label {
-  background: #ddd;
-  font-weight: bold;
-}
-
-.cell.empty { background: #fff; }
-.cell.ship { background: #888; }
-.cell.hit { background: #f00; }
-.cell.miss { background: #00f; }
-.cell.unknown { background: #fff; }
-
-.grid-labels {
-  display: flex;
-}
-
-.start-button, .restart-button {
-  padding: 10px 20px;
-  font-size: 16px;
-  cursor: pointer;
-  margin: 10px;
-}
-
-.status {
-  height: 40px; /* Фиксированная высота */
+  background: none;
+  border: none;
+  color: #fff;
+  font-weight: 600;
+  font-size: 0.8rem; /* Компактные метки */
+  width: 30px;
+  height: 30px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  font-size: 16px;
-  margin-top: 10px;
 }
 
-/* Мобильная адаптация */
-@media (max-width: 600px) {
+/* Стили клеток */
+.cell.empty, .cell.unknown {
+  background: rgba(0, 0, 100, 0.2);
+  cursor: pointer;
+}
+
+.cell.ship {
+  background: linear-gradient(45deg, #4682b4, #778899);
+}
+
+.cell.hit {
+  background: #ff0000;
+  color: #fff;
+  animation: explosion 0.6s ease forwards;
+}
+
+.cell.miss {
+  background: #00b7eb;
+  color: #fff;
+  animation: splash 0.6s ease forwards;
+}
+
+/* Анимация взрыва */
+@keyframes explosion {
+  0% {
+    background: radial-gradient(circle, #ff4500 20%, #ff0000 60%);
+    transform: scale(1);
+  }
+  50% {
+    background: radial-gradient(circle, #ffa500 30%, #ff4500 70%);
+    transform: scale(1.3);
+  }
+  100% {
+    background: #ff0000;
+    transform: scale(1);
+  }
+}
+
+/* Анимация брызг */
+@keyframes splash {
+  0% {
+    background: radial-gradient(circle, #00b7eb 20%, transparent 60%);
+    transform: scale(1);
+  }
+  50% {
+    background: radial-gradient(circle, #0096c7 30%, transparent 70%);
+    transform: scale(1.2);
+  }
+  100% {
+    background: #00b7eb;
+    transform: scale(1);
+  }
+}
+
+/* Эффект брызг */
+.cell.miss::after {
+  content: '';
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: radial-gradient(circle, rgba(255, 255, 255, 0.3) 10%, transparent 50%);
+  animation: ripple 0.8s ease-out;
+}
+
+@keyframes ripple {
+  0% { transform: scale(0); opacity: 1; }
+  100% { transform: scale(2); opacity: 0; }
+}
+
+/* Кнопки */
+.start-button, .restart-button {
+  background: linear-gradient(45deg, #00b7eb, #00ddeb);
+  border: none;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  color: #fff;
+  border-radius: 5px;
+  cursor: pointer;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  transition: transform 0.2s, background 0.3s;
+  margin: 0.5rem;
+}
+
+.start-button:hover, .restart-button:hover {
+  transform: scale(1.05);
+  background: linear-gradient(45deg, #0096c7, #00b7eb);
+}
+
+.start-button:active, .restart-button:active {
+  transform: scale(0.95);
+}
+
+/* Статус */
+.status {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #ffd700;
+  text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.5);
+  margin-top: 0.5rem;
+}
+
+.status span {
+  margin: 0.2rem 0;
+}
+
+/* Мобильная версия */
+@media (max-width: 768px) {
+  .container {
+    padding: 0.3rem; /* Меньше отступов */
+    justify-content: flex-start;
+  }
+
   .game {
-    flex-direction: column;
-    align-items: center;
+    flex-direction: row; /* Пробуем сохранить поля рядом */
+    gap: 0.3rem;
+    max-width: 100%;
+    justify-content: center;
+  }
+
+  .board {
+    padding: 0.2rem;
   }
 
   .cell {
-    width: 20px;
-    height: 20px;
-    font-size: 12px;
+    width: 30px; /* Компактные клетки */
+    height: 30px;
+    font-size: 0.8rem;
   }
 
-  .start-button, .restart-button {
-    padding: 8px 16px;
-    font-size: 14px;
-  }
-
-  .status {
-    font-size: 14px;
+  .cell.label {
+    width: 30px;
+    height: 30px;
+    font-size: 0.7rem;
   }
 
   h1 {
-    font-size: 24px;
+    font-size: 1.5rem;
+  }
+
+  .board h2 {
+    font-size: 0.95rem;
   }
 
   h2 {
-    font-size: 18px;
+    margin-bottom: 0.2rem;
+  }
+
+  .start-button, .restart-button {
+    padding: 0.3rem 0.6rem;
+    font-size: 0.8rem;
+  }
+
+  .status {
+    font-size: 0.7rem;
+  }
+}
+
+/* Для очень узких экранов */
+@media (max-width: 480px) {
+  .game {
+    flex-direction: column; /* Поля в столбец */
+    gap: 0.5rem;
+  }
+
+  .cell {
+    width: 28px; /* Ещё меньше */
+    height: 28px;
+    font-size: 0.7rem;
+  }
+
+  .cell.label {
+    width: 28px;
+    height: 28px;
+    font-size: 0.6rem;
+  }
+
+  .board {
+    padding: 0.2rem;
+  }
+
+  h1 {
+    font-size: 1.3rem;
+  }
+
+  .board h2 {
+    font-size: 0.8rem;
   }
 }
